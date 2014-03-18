@@ -1,0 +1,36 @@
+{
+  "name": "chai-sentinels",
+  "version": "0.0.0",
+  "description": "Pass sentinel values through your code and assert the results with Chai.",
+  "main": "lib/main.js",
+  "scripts": {
+    "test": "mocha",
+    "lint": "jshint --reporter node_modules/jshint-stylish/stylish.js .",
+    "doc": "grock",
+    "doc-publish": "grock --github"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/novemberborn/chai-sentinels"
+  },
+  "keywords": [
+    "chai",
+    "testing",
+    "spies",
+    "stubs",
+    "mocks"
+  ],
+  "author": "Mark Wubben",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/novemberborn/chai-sentinels/issues"
+  },
+  "homepage": "https://github.com/novemberborn/chai-sentinels",
+  "devDependencies": {
+    "chai": "1.8.1",
+    "jshint-stylish": "^0.1.5",
+    "mocha": "^1.17.1",
+    "jshint": "^2.4.4",
+    "grock": "^0.3.2"
+  }
+}

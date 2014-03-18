@@ -1,0 +1,11 @@
+{
+  "glob": [
+    "README.md",
+    "lib/main.js",
+    "lib/Sentinel.js",
+    "lib/assertions.js"
+  ],
+  "github": false,
+  "out": "doc/",
+  "index": "README.md"
+}

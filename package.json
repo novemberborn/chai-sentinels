@@ -1,6 +1,6 @@
 {
   "name": "chai-sentinels",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Pass sentinel values through your code and assert the results with Chai.",
   "main": "lib/main.js",
   "scripts": {

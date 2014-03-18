@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Assertions - assertions.js</title>
+
+  <link rel="stylesheet" href="../assets/style.css">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"/>
+  <meta name="groc-relative-root" content="../"/>
+  <meta name="groc-document-path" content="lib/assertions.js"/>
+  
+</head>
+<body>
+  <div id="file-area">
+    <div id="meta">
+      <code class="file-path">
+      
+        <a href="https://github.com/novemberborn/chai-sentinels/blob/master/lib/assertions.js">lib/assertions.js</a>
+      
+      </code>
+    </div>
+    <div id="document">
+    
+      <div class="segment">
+      
+      
+        <div class="code"><div class="wrapper"><span class="hljs-pi">'use strict'</span>;
+
+<span class="hljs-keyword">var</span> Sentinel = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Sentinel'</span>);
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h1 id="assertions"><a href="#assertions" class="anchor"></a>Assertions</h1></div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">module.exports = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(chai, utils)</span> {</span>
+  <span class="hljs-keyword">var</span> Assertion = chai.Assertion;
+  <span class="hljs-keyword">var</span> assert = chai.assert;
+
+  <span class="hljs-keyword">var</span> EXPECTED_MSG = <span class="hljs-string">'validating expected value'</span>;
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">assertSentinelEquality</span><span class="hljs-params">(parentAssertion, expected)</span> {</span>
+    <span class="hljs-keyword">var</span> equal = <span class="hljs-keyword">new</span> Assertion(parentAssertion._obj);
+    utils.transferFlags(parentAssertion, equal, <span class="hljs-literal">false</span>);
+    <span class="hljs-keyword">return</span> equal.to.be.equal(expected);
+  }
+
+  <span class="hljs-keyword">var</span> hop = {}.hasOwnProperty;
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">assertArrayEquality</span><span class="hljs-params">(actual, expected)</span> {</span>
+    <span class="hljs-keyword">var</span> ok = <span class="hljs-literal">true</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; ok &amp;&amp; i &lt; actual.length; i++) {
+      <span class="hljs-keyword">if</span> (!hop.call(actual, i)) {
+        ok = !hop.call(expected, i);
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">new</span> Assertion(actual[i]).to.be.a.sentinel) {
+        ok = expected[i] === actual[i];
+      }
+    }
+    <span class="hljs-keyword">return</span> ok;
+  }
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h2 id="expect-should"><a href="#expect-should" class="anchor"></a>Expect / Should</h2><h3 id="-to-be-a-sentinel-to-not-be-a-sentinel"><a href="#-to-be-a-sentinel-to-not-be-a-sentinel" class="anchor"></a>.to.be.a.sentinel / .to.not.be.a.sentinel</h3><p>Checks whether the actual value is (or isn&#39;t) an instance of <code>Sentinel</code>.</p>
+</div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">  Assertion.addProperty(<span class="hljs-string">'sentinel'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+    <span class="hljs-keyword">this</span>.assert(
+      <span class="hljs-keyword">this</span>._obj <span class="hljs-keyword">instanceof</span> Sentinel,
+      <span class="hljs-string">'expected #{this} to be a Sentinel'</span>,
+      <span class="hljs-string">'expected #{this} to not be a Sentinel'</span>
+    );
+  });
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h3 id="-to-be-matchingsentinels-expected-"><a href="#-to-be-matchingsentinels-expected-" class="anchor"></a>.to.be.matchingSentinels(expected)</h3><p>Checks whether the actual value matches the expected sentinels. Behavior
+varies depending on whether <code>expected</code> is a Sentinel, an array or an
+object.</p>
+</div>
+        </div>
+      
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><p>If <code>expected</code> is itself a <code>Sentinel</code> instance, the actual value must also
+be a Sentinel instance, and be strictly equal to <code>expected</code>.</p>
+</div>
+        </div>
+      
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><p>If <code>expected</code> is an array, each item must be a <code>Sentinel</code> instance. The
+actual value must also be an array and again each item must be a <code>Sentinel</code>
+instance. Both arrays must have the same length and must not be empty. Only
+if both arrays contain strictly the same sentinels at the same indexes
+does the assertion pass.</p>
+</div>
+        </div>
+      
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><p>If <code>expected</code> is a sparse array, the actual value may also be a sparse
+array, provided the sparse indexes line up.</p>
+</div>
+        </div>
+      
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><p>If <code>expected</code> is not an array but is an object, each own-value must be a
+<code>Sentinel</code> instance. The actual value must also be an object and again each
+own-value must be a <code>Sentinel</code> instance. Both objects must have the same
+own-properties, with at least 1 property each. Only if both objects contain
+strictly the same sentinels for the same own-properties does the assertion
+pass.</p>
+</div>
+        </div>
+      
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h3 id="-to-not-be-matchingsentinels-expected-"><a href="#-to-not-be-matchingsentinels-expected-" class="anchor"></a>.to.not.be.matchingSentinels(expected)</h3><p>Like <code>.to.be.matchingSentinels(expected)</code>, but the negation is only applied
+to the sentinel comparisons.</p>
+</div>
+        </div>
+      
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><p>The assertion passes if both <code>expected</code> and the actual value are different
+<code>Sentinel</code> instances</p>
+</div>
+        </div>
+      
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><p>The assertion passes if both <code>expected</code> and the actual value are non-empty
+arrays containing the same number of <code>Sentinel</code> instances, but at least one
+sentinel does not strictly equal the sentinel at the corresponding index.</p>
+</div>
+        </div>
+      
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><p>The assertion passes if both <code>expected</code> and the actual value are objects
+with the same own-properties (at least 1 property each), all containing
+<code>Sentinel</code> instances, and at least one sentinel does not strictly equal the
+sentinel at the corresponding property.</p>
+</div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">  Assertion.addMethod(<span class="hljs-string">'matchingSentinels'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(expected)</span> {</span>
+    <span class="hljs-keyword">var</span> matchSingle = expected <span class="hljs-keyword">instanceof</span> Sentinel;
+    <span class="hljs-keyword">var</span> matchArray = <span class="hljs-built_in">Array</span>.isArray(expected);
+    <span class="hljs-keyword">var</span> matchObject = !matchSingle &amp;&amp; !matchArray &amp;&amp; expected &amp;&amp;
+      <span class="hljs-keyword">typeof</span> expected === <span class="hljs-string">'object'</span>;
+
+    <span class="hljs-keyword">var</span> expectedKeys, valueKeys;
+
+    matchArray = matchArray &amp;&amp; (
+      <span class="hljs-keyword">new</span> Assertion(expected, EXPECTED_MSG).to.not.be.empty,
+      <span class="hljs-comment">//If `expected` is a sparse array, don't check the holes. We'll assert</span>
+      <span class="hljs-comment">//the actual value has holes in the same places.</span>
+      expected.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e, i)</span> {</span>
+        <span class="hljs-keyword">var</span> msg = EXPECTED_MSG + <span class="hljs-string">' at index '</span> + i;
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Assertion(e, msg).to.be.a.sentinel;
+      }),
+      <span class="hljs-literal">true</span>
+    );
+
+    matchObject = matchObject &amp;&amp; (
+      <span class="hljs-keyword">new</span> Assertion(expected, EXPECTED_MSG).to.not.be.empty,
+      (expectedKeys = <span class="hljs-built_in">Object</span>.keys(expected)).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(key)</span> {</span>
+        <span class="hljs-keyword">var</span> msg = EXPECTED_MSG + <span class="hljs-string">' of key \''</span> + key + <span class="hljs-string">'\''</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Assertion(expected[key], msg).to.be.a.sentinel;
+      }),
+      <span class="hljs-literal">true</span>
+    );
+
+    <span class="hljs-keyword">if</span> (matchSingle) {
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Assertion(<span class="hljs-keyword">this</span>._obj).to.be.a.sentinel,
+        assertSentinelEquality(<span class="hljs-keyword">this</span>, expected);
+    }
+
+    <span class="hljs-keyword">if</span> (matchArray) {
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Assertion(<span class="hljs-keyword">this</span>._obj).to.be.an(<span class="hljs-string">'array'</span>),
+        <span class="hljs-keyword">new</span> Assertion(<span class="hljs-keyword">this</span>._obj).to.not.be.empty,
+        <span class="hljs-keyword">new</span> Assertion(<span class="hljs-keyword">this</span>._obj).to.have.length(expected.length),
+        <span class="hljs-keyword">this</span>.assert(
+          assertArrayEquality(<span class="hljs-keyword">this</span>._obj, expected),
+          <span class="hljs-string">'expected all sentinels of #{this} to equal #{exp}'</span>,
+          <span class="hljs-string">'expected some sentinels of #{this} to not equal #{exp}'</span>,
+          expected
+        );
+    }
+
+    <span class="hljs-keyword">if</span> (matchObject) {
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Assertion(<span class="hljs-keyword">this</span>._obj).to.be.an(<span class="hljs-string">'object'</span>),
+        <span class="hljs-keyword">new</span> Assertion(<span class="hljs-keyword">this</span>._obj).to.not.be.empty,
+        (valueKeys = <span class="hljs-built_in">Object</span>.keys(<span class="hljs-keyword">this</span>._obj)),
+        <span class="hljs-keyword">new</span> Assertion(valueKeys.sort()).to.deep.equal(expectedKeys.sort()),
+        <span class="hljs-keyword">this</span>.assert(
+          valueKeys.every(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(key)</span> {</span>
+            <span class="hljs-keyword">var</span> s = <span class="hljs-keyword">this</span>._obj[key];
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Assertion(s).to.be.a.sentinel,
+              expected[key] === s;
+          }, <span class="hljs-keyword">this</span>),
+          <span class="hljs-string">'expected all sentinels of #{this} to equal #{exp}'</span>,
+          <span class="hljs-string">'expected some sentinels of #{this} to not equal #{exp}'</span>,
+          expected
+        );
+    }
+
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Assertion(expected, EXPECTED_MSG).to.be.a.sentinel;
+  });
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h2 id="assert"><a href="#assert" class="anchor"></a>Assert</h2><h3 id="issentinel-val-message-"><a href="#issentinel-val-message-" class="anchor"></a>isSentinel(val, message)</h3><p>See <code>expect(val, message).to.be.a.sentinel</code>.</p>
+</div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">  assert.isSentinel = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(val, message)</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Assertion(val, message).to.be.a.sentinel;
+  };
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h3 id="isnotsentinel-val-message-"><a href="#isnotsentinel-val-message-" class="anchor"></a>isNotSentinel(val, message)</h3><p>See <code>expect(val, message).to.not.be.a.sentinel</code>.</p>
+</div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">  assert.isNotSentinel = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(val, message)</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Assertion(val, message).to.not.be.a.sentinel;
+  };
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h3 id="matchingsentinels-actual-expected-message-"><a href="#matchingsentinels-actual-expected-message-" class="anchor"></a>matchingSentinels(actual, expected, message)</h3><p>See <code>expect(actual, message).to.be.matchingSentinels(expected)</code>.</p>
+</div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">  assert.matchingSentinels = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(actual, expected, message)</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Assertion(actual, message).to.be.matchingSentinels(expected);
+  };
+</div></div>
+      
+      </div>
+    
+      <div class="segment">
+      
+        <div class="comments ">
+          <div class="wrapper"><h3 id="nonmatchingsentinels-actual-expected-message-"><a href="#nonmatchingsentinels-actual-expected-message-" class="anchor"></a>nonMatchingSentinels(actual, expected, message)</h3><p>See <code>expect(actual, message).to.not.be.matchingSentinels(expected)</code>.</p>
+</div>
+        </div>
+      
+      
+        <div class="code"><div class="wrapper">  assert.nonMatchingSentinels = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(actual, expected, message)</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Assertion(actual, message).to.not.be.matchingSentinels(expected);
+  };
+};
+</div></div>
+      
+      </div>
+    
+    </div>
+  </div>
+
+  <script src="../toc.js"></script>
+  <script src="../assets/libs.js"></script>
+  <script src="../assets/behavior.js"></script>
+</body>
+</html>
